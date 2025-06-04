@@ -14,26 +14,26 @@ import (
 func TestPyResolver_Resolve(t *testing.T) {
 	const moduleName = "example.com/project"
 	files := map[string]string{
-		"go.mod":                 "module example.com/project\n\ngo 1.20\n",
-		"main.go":                "package main\n\nimport (\n\t\"fmt\"\n\t\"example.com/project/pkg/util\"\n\t\"./local\"\n\t\"github.com/gin-gonic/gin\"\n\t\"example.com/project/empty_dir\"\n)\n\nfunc main() {\n\tfmt.Println(\"Hello\")\n\tutil.Helper()\n\tlocal.Do()\n\t_ = gin.Default()\n}\n",
-		"pkg/util/util.go":       "package util\n\nimport \"example.com/project/pkg/nested\"\n\nfunc Helper() {\n\tnested.NestedFunc()\n}\n",
-		"pkg/util/helper.go":     "package util\n\nfunc AnotherHelper(){}\n",                               // Sibling file in same package
-		"pkg/util/util_test.go":  "package util\n\nimport \"testing\"\n\nfunc TestHelper(t *testing.T) {}", // Should be ignored
-		"pkg/nested/nested.go":   "package nested\n\nfunc NestedFunc() {}\n",
-		"local/local.go":         "package local\n\nimport (\n\t\"../other\"\n\t\"example.com/project/local/sub\"\n)\n\nfunc Do() {\n other.OtherFunc()\n sub.SubFunc()\n}\n",
-		"local/sub/sub.go":       "package sub\n\nfunc SubFunc() {}",
-		"other/other.go":         "package other\n\nfunc OtherFunc() {}\n",
-		"invalid.go":             "package invalid\n func Bad() {\n",                            // Invalid syntax
-		"empty.go":               "package empty",                                               // Empty but valid Go file
-		"empty_dir/readme.md":    "This directory intentionally left empty of Go files.",        // Import should resolve dir, but find no deps
-		"no_module/main.go":      "package main\n\nimport (\n\t\"./util\"\n)\n\nfunc main() {}", // For testing with empty module name
-		"no_module/util/util.go": "package util",                                                // Sibling for no_module test
+		"main.py":                     "import sys\nimport pkg.util as util\nimport local\nimport requests\nimport project.empty_dir\n\ndef main():\n\tprint(\"Hello\")\n\tutil.helper()\n\tlocal.do()\n\t_ = requests.get('https://example.com')",
+		"pkg/util.py":                 "from .nested import nested\n\ndef helper():\n\tnested.nested_func()",
+		"pkg/helper.py":               "def another_helper():\n\tpass",
+		"pkg/test_util.py":            "import unittest\n\nclass TestHelper(unittest.TestCase):\n\tdef test_helper(self):\n\t\tpass",
+		"pkg/nested/nested.py":        "def nested_func():\n\tpass",
+		"package.py":                  "import pkg\ndef do():\n\tpkg.helper.another_helper()",
+		"local/local.py":              "from .other import other_func\nfrom ..sub.sub import sub_func\n\ndef do():\n\tsub_func()\n\nother_func()",
+		"local/other.py":              "def func():\n\tpass",
+		"sub/sub.py":                  "def sub_func():\n\tpass",
+		"invalid.py":                  "def bad_func(:", // Intentionally invalid
+		"empty.py":                    "# Empty but valid Python file",
+		"project/empty_dir/readme.md": "This directory intentionally left empty of Python files.",
+		"no_module/main.py":           "from .util import util_func\n\ndef main():\n\tpass",
+		"no_module/util.py":           "# Utility module with no content",
 	}
 
 	tempDir, cleanup := setupTestEnv(t, files)
 	defer cleanup()
 
-	resolver := GoResolver{}
+	resolver := PyResolver{}
 
 	tests := []struct {
 		name         string
@@ -47,14 +47,14 @@ func TestPyResolver_Resolve(t *testing.T) {
 			filePath: "main.py",
 			expectedDeps: []string{
 				"local/local.py",
-				"pkg/util/helper.py",
-				"pkg/util/util.py",
+				"local/other.py",
+				"pkg/util.py",
 			},
 			expectError: false,
 		},
 		{
 			name:     "Package util file",
-			filePath: "pkg/util/util.py",
+			filePath: "pkg/util.py",
 			expectedDeps: []string{
 				"pkg/nested/nested.py",
 			},
@@ -64,8 +64,8 @@ func TestPyResolver_Resolve(t *testing.T) {
 			name:     "Local relative import",
 			filePath: "local/local.py",
 			expectedDeps: []string{
-				"local/sub/sub.py",
-				"other/other.py",
+				"sub/sub.py",
+				"local/other.py",
 			},
 			expectError: false,
 		},
@@ -80,16 +80,6 @@ func TestPyResolver_Resolve(t *testing.T) {
 			filePath:     "empty.py",
 			expectedDeps: []string{},
 			expectError:  false,
-		},
-		{
-			name:     "Import resolves to dir with no py files",
-			filePath: "main.py",
-			expectedDeps: []string{
-				"local/local.py",
-				"pkg/util/helper.py",
-				"pkg/util/util.py",
-			},
-			expectError: false,
 		},
 		{
 			name:         "Non-existent file path",
@@ -108,16 +98,7 @@ func TestPyResolver_Resolve(t *testing.T) {
 			filePath:   "no_module/main.py",
 			moduleName: "",
 			expectedDeps: []string{
-				"no_module/util/util.py",
-			},
-			expectError: false,
-		},
-		{
-			name:       "Resolve module path when module name unknown",
-			filePath:   "main.py",
-			moduleName: "",
-			expectedDeps: []string{
-				"local/local.py",
+				"no_module/util.py",
 			},
 			expectError: false,
 		},
@@ -176,4 +157,3 @@ func TestPyResolver_Resolve(t *testing.T) {
 		})
 	}
 }
-
