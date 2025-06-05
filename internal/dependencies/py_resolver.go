@@ -32,18 +32,19 @@ func (r *PyResolver) Resolve(fileContent []byte, filePath string, projectRoot st
 		return nil, fmt.Errorf("parsing error detected in Python file %s", filePath)
 	}
 
-	queryString := `[
-  (import_statement
-    [
-      (dotted_name) @import_path 
-      (aliased_import name: (dotted_name) @import_path) 
-    ])
-		(import_from_statement 
-			module_name: [
-				(dotted_name) @import_path
-				(relative_import) @import_path
-			])
-	]`
+	queryString := `
+		[
+  			(import_statement [
+ 	     		(dotted_name) @import_path 
+ 	     		(aliased_import name: (dotted_name) @import_path) 
+ 	   		])
+			(import_from_statement 
+				module_name: [
+					(dotted_name) @import_path
+					(relative_import) @import_path
+				])
+		]
+	`
 
 	query, err := sitter.NewQuery([]byte(queryString), python.GetLanguage())
 	if err != nil {

@@ -14,20 +14,47 @@ import (
 func TestPyResolver_Resolve(t *testing.T) {
 	const moduleName = "example.com/project"
 	files := map[string]string{
-		"main.py":                     "import sys\nimport pkg.util as util\nimport local\nimport requests\nimport project.empty_dir\n\ndef main():\n\tprint(\"Hello\")\n\tutil.helper()\n\tlocal.do()\n\t_ = requests.get('https://example.com')",
-		"pkg/util.py":                 "from .nested import nested\n\ndef helper():\n\tnested.nested_func()",
-		"pkg/helper.py":               "def another_helper():\n\tpass",
-		"pkg/test_util.py":            "import unittest\n\nclass TestHelper(unittest.TestCase):\n\tdef test_helper(self):\n\t\tpass",
-		"pkg/nested/nested.py":        "def nested_func():\n\tpass",
-		"package.py":                  "import pkg\ndef do():\n\tpkg.helper.another_helper()",
-		"local/local.py":              "from .other import other_func\nfrom ..sub.sub import sub_func\n\ndef do():\n\tsub_func()\n\nother_func()",
-		"local/other.py":              "def func():\n\tpass",
-		"sub/sub.py":                  "def sub_func():\n\tpass",
-		"invalid.py":                  "def bad_func(:", // Intentionally invalid
-		"empty.py":                    "# Empty but valid Python file",
+		// Multiple import styles: aliased imports, third-party packages, standard lib
+		"main.py": "import sys\nimport pkg.util as util\nimport local\nimport requests\nimport project.empty_dir\n\ndef main():\n\tprint(\"Hello\")\n\tutil.helper()\n\tlocal.do()\n\t_ = requests.get('https://example.com')",
+
+		// Relative imports within a package structure
+		"pkg/util.py": "from .nested import nested\n\ndef helper():\n\tnested.nested_func()",
+
+		// Basic importable module for dependency checking
+		"pkg/helper.py": "def another_helper():\n\tpass",
+
+		// Handling of test files in dependency resolution
+		"pkg/test_util.py": "import unittest\n\nclass TestHelper(unittest.TestCase):\n\tdef test_helper(self):\n\t\tpass",
+
+		// Nested module dependency resolution
+		"pkg/nested/nested.py": "def nested_func():\n\tpass",
+
+		// Package-level import resolution
+		"package.py": "import pkg\ndef do():\n\tpkg.helper.another_helper()",
+
+		// Multi-level relative imports including parent directory
+		"local/local.py": "from .other import other_func\nfrom ..sub.sub import sub_func\n\ndef do():\n\tsub_func()\n\nother_func()",
+
+		// Target for relative import resolution
+		"local/other.py": "def func():\n\tpass",
+
+		// Parent directory module import resolution
+		"sub/sub.py": "def sub_func():\n\tpass",
+
+		// Invalid Python syntax error handling
+		"invalid.py": "def bad_func(:", 
+
+		// Empty file handling
+		"empty.py": "# Empty but valid Python file",
+
+		// Non-Python file handling in package directory
 		"project/empty_dir/readme.md": "This directory intentionally left empty of Python files.",
-		"no_module/main.py":           "from .util import util_func\n\ndef main():\n\tpass",
-		"no_module/util.py":           "# Utility module with no content",
+
+		// Relative imports without explicit module name
+		"no_module/main.py": "from .util import util_func\n\ndef main():\n\tpass",
+
+		// Empty module dependency resolution
+		"no_module/util.py": "# Utility module with no content",
 	}
 
 	tempDir, cleanup := setupTestEnv(t, files)
