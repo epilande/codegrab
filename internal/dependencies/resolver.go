@@ -25,6 +25,8 @@ func GetResolver(filePath string) Resolver {
 		return &GoResolver{}
 	case ".js", ".jsx", ".ts", ".tsx":
 		return &JSResolver{}
+	case ".py":
+		return &PyResolver{}
 	default:
 		return nil
 	}

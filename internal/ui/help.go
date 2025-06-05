@@ -20,7 +20,7 @@ Selection & Output:
   space / tab              Select/deselect file or directory
   y                        Copy generated output to clipboard
   g                        Generate output file
-  D                        Toggle automatic dependency resolution (Go, TS/JS)
+  D                        Toggle automatic dependency resolution (Go, TS/JS, PY)
   F                        Cycle through output formats (md, txt, xml)
   S                        Toggle secret redaction (Default: On)
 

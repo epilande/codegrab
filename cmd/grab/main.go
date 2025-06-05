@@ -75,7 +75,7 @@ func main() {
 	flag.StringVar(&formatName, "format", "markdown", formatUsage)
 	flag.StringVar(&formatName, "f", "markdown", formatUsage+" (shorthand)")
 
-	flag.BoolVar(&resolveDeps, "deps", false, "Automatically include direct dependencies (Go, TS/JS)")
+	flag.BoolVar(&resolveDeps, "deps", false, "Automatically include direct dependencies (Go, TS/JS, PY)")
 
 	flag.IntVar(&maxDepth, "max-depth", 1, "Maximum depth for dependency resolution (-1 for unlimited)")
 
