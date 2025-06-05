@@ -12,7 +12,6 @@ import (
 )
 
 func TestPyResolver_Resolve(t *testing.T) {
-	const moduleName = "example.com/project"
 	files := map[string]string{
 		// Multiple import styles: aliased imports, third-party packages, standard lib
 		"main.py": "import sys\nimport pkg.util as util\nimport local\nimport requests\nimport project.empty_dir\n\ndef main():\n\tprint(\"Hello\")\n\tutil.helper()\n\tlocal.do()\n\t_ = requests.get('https://example.com')",
@@ -149,15 +148,8 @@ func TestPyResolver_Resolve(t *testing.T) {
 				t.Fatalf("Failed to read test file %s: %v", tt.filePath, readErr)
 			}
 
-			currentModuleName := tt.moduleName
-			useDefaultModule := tt.name != "Resolve without module name (should only resolve relative)" &&
-				tt.name != "Resolve module path when module name unknown"
 
-			if currentModuleName == "" && useDefaultModule {
-				currentModuleName = moduleName
-			}
-
-			deps, err := resolver.Resolve(fileContent, tt.filePath, tempDir, currentModuleName)
+			deps, err := resolver.Resolve(fileContent, tt.filePath, tempDir, "")
 
 			if tt.expectError {
 				if err == nil && !errors.Is(readErr, fs.ErrNotExist) {
