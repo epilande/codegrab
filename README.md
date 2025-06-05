@@ -6,7 +6,7 @@
   <strong>An interactive CLI tool for selecting and bundling code into a single, LLM-ready output file.</strong>
 </p>
 
-![codegrab-demo](https://github.com/user-attachments/assets/77b8984e-913f-4646-a1f7-e4d16aa8f7b5)
+![codegrab-demo](https://github.com/user-attachments/assets/0f7d3e41-d023-4763-aff6-17c6be7c4189)
 
 ## ❓ Why?
 
@@ -104,6 +104,8 @@ grab [options] [directory]
 | `--max-depth <depth>`    | Maximum depth for dependency resolution (`-1` for unlimited, default: `1`). Only effective with `--deps`.                                                                                            |
 | `--max-file-size <size>` | Maximum file size to include (e.g., `"100kb"`, `"2MB"`). No limit by default. Files exceeding the specified size will be skipped.                                                                    |
 | `--theme <name>`         | Set the UI theme. Available: catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha, rose-pine, rose-pine-dawn, rose-pine-moon, dracula, nord. (default: `"catppuccin-mocha"`). |
+| `--show-tokens`          | Show the number of tokens for each file in file tree.                                                                                                                                                |
+| `--icons`                | Display Nerd Font icons.                                                                                                                                                                             |
 
 ### 📖 Examples
 

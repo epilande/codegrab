@@ -27,6 +27,10 @@ github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSs
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+github.com/epilande/go-devicons v0.0.0-20250430064519-26ca6d272b4c h1:ZKFmMr4EQ+6wni8gHq56tEmjMdIDySQ+zFgwXi+yCgc=
+github.com/epilande/go-devicons v0.0.0-20250430064519-26ca6d272b4c/go.mod h1:myBNrCUxmCh3ktYaRUMfL8epmWMBu6/yj0JFnQHYFSU=
+github.com/epilande/go-devicons v0.0.0-20250502062109-89b44a507be9 h1:wu8xPucxiGFKrSN24fE9VVzjthnfVqYFx33bNoRL8DU=
+github.com/epilande/go-devicons v0.0.0-20250502062109-89b44a507be9/go.mod h1:myBNrCUxmCh3ktYaRUMfL8epmWMBu6/yj0JFnQHYFSU=
 github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f h1:Y/CXytFA4m6baUTXGLOoWe4PQhGxaX0KpnayAqC48p4=
 github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f/go.mod h1:vw97MGsxSvLiUE2X8qFplwetxpGLQrlU1Q9AUEIzCaM=
 github.com/fatih/semgroup v1.2.0 h1:h/OLXwEM+3NNyAdZEpMiH1OzfplU09i2qXPVThGZvyg=

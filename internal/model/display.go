@@ -7,13 +7,10 @@ import (
 	"strings"
 
 	"github.com/epilande/codegrab/internal/filesystem"
+	"github.com/epilande/go-devicons"
 )
 
 // buildDisplayNodes constructs a hierarchical view of files and directories for display.
-// It creates FileNode objects for each item, properly indented based on directory depth,
-// respects collapsed/expanded states of directories, marks selected/deselected items,
-// identifies dependencies, and sorts files and directories.
-// The resulting displayNodes slice is used for rendering the file tree in the UI.
 func (m *Model) buildDisplayNodes() {
 	m.displayNodes = nil
 	nodesToAdd := make(map[string]filesystem.FileItem)
@@ -31,6 +28,15 @@ func (m *Model) buildDisplayNodes() {
 		}
 		processed[item.Path] = true
 
+		icon := ""
+		iconColor := ""
+		if m.showIcons {
+			fullPath := filepath.Join(m.rootPath, item.Path)
+			style := devicons.IconForPath(fullPath)
+			icon = style.Icon
+			iconColor = style.Color
+		}
+
 		node := FileNode{
 			Path:         item.Path,
 			Name:         filepath.Base(item.Path),
@@ -39,6 +45,8 @@ func (m *Model) buildDisplayNodes() {
 			Selected:     m.selected[item.Path],
 			IsDeselected: m.deselected[item.Path],
 			IsDependency: m.isDependency[item.Path],
+			Icon:         icon,
+			IconColor:    iconColor,
 		}
 		m.displayNodes = append(m.displayNodes, node)
 
@@ -55,6 +63,7 @@ func (m *Model) buildDisplayNodes() {
 					}
 				}
 			}
+
 			for _, childItem := range directChildren {
 				children = append(children, childItem)
 			}
