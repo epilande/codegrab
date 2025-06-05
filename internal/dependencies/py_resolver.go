@@ -57,7 +57,6 @@ func (r *PyResolver) Resolve(fileContent []byte, filePath string, projectRoot st
 	defer qc.Close()
 
 	fileDir := filepath.Dir(filePath)
-	fmt.Println("fileDir ", fileDir)
 	for {
 		match, ok := qc.NextMatch()
 		if !ok {
@@ -66,7 +65,6 @@ func (r *PyResolver) Resolve(fileContent []byte, filePath string, projectRoot st
 		for _, capture := range match.Captures {
 			node := capture.Node
 			importPath := node.Content(fileContent)
-			fmt.Println("haha", importPath)
 			if importPath == "" {
 				continue
 			}
