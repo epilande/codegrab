@@ -56,7 +56,7 @@ const UsageText = `Usage:
     -f, --format <format>    Output format. Available: markdown, text, xml (default: "markdown").
     -S, --skip-redaction     Skip automatic secret redaction via gitleaks (Default: false).
                              WARNING: This may expose sensitive information!
-    --deps                   Automatically include direct dependencies for selected files (Go, JS/TS).
+    --deps                   Automatically include direct dependencies for selected files (Go, JS/TS, Python).
     --max-depth <depth>      Maximum depth for dependency resolution (-1 for unlimited, default: 1).
                              Only effective when --deps is used.
     --max-file-size <size>   Maximum file size to include (e.g., "50kb", "2MB"). No limit by default.
