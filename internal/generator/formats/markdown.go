@@ -44,7 +44,7 @@ const markdownTemplate = `# Project Structure
 
 ` + "```" + `
 {{.Structure}}` + "```" + `
-
+{{if .Files}}
 # Project Files
 {{range .Files}}
 ## File: ` + "`" + `{{.Path}}` + "`" + `
@@ -52,5 +52,4 @@ const markdownTemplate = `# Project Structure
 ` + "```" + `{{.Language}}
 {{.Content}}
 ` + "```" + `
-{{end}}
-`
+{{end}}{{end}}`

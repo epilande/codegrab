@@ -471,6 +471,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			m.warningMsg = ""
 			m.refreshViewportContent()
+		case "T":
+			m.treeOnly = !m.treeOnly
+			m.generator.SetTreeOnlyMode(m.treeOnly)
+			if m.treeOnly {
+				m.successMsg = "Tree-only mode enabled (structure only)"
+			} else {
+				m.successMsg = "Tree-only mode disabled (full output)"
+			}
+			m.refreshViewportContent()
 		case "P":
 			// Toggle preview pane
 			m.showPreview = !m.showPreview

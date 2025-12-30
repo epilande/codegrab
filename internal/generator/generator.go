@@ -26,6 +26,7 @@ type Generator struct {
 	UseGitIgnore    bool
 	ShowHidden      bool
 	RedactSecrets   bool
+	TreeOnly        bool
 	lastSecretCount int
 }
 
@@ -73,6 +74,11 @@ func (g *Generator) GetFormatName() string {
 // SetRedactionMode enables or disables secret redaction.
 func (g *Generator) SetRedactionMode(redact bool) {
 	g.RedactSecrets = redact
+}
+
+// SetTreeOnlyMode enables or disables tree-only output (structure without file contents).
+func (g *Generator) SetTreeOnlyMode(treeOnly bool) {
+	g.TreeOnly = treeOnly
 }
 
 // Generate creates an output file in the specified format
@@ -211,7 +217,9 @@ func (g *Generator) PrepareTemplateData() (TemplateData, error) {
 	}
 
 	var filesData []FileData
-	collectFiles(rootNode, &filesData, g.RootPath, &g.SecretScanner)
+	if !g.TreeOnly {
+		collectFiles(rootNode, &filesData, g.RootPath, &g.SecretScanner)
+	}
 
 	secretCount := 0
 

@@ -27,6 +27,7 @@ to your clipboard, ready for LLM processing.
 - ⏳ **Temp File**: Generate the output file in your system's temporary directory
 - 📋 **Clipboard Integration**: Copy content or output file directly to your clipboard
 - 🌲 **Directory Tree View**: Display a tree-style view of your project structure
+- 🌳 **Tree-Only Mode**: Output just the file structure without contents using `-T` flag
 - 🧮 **Token Estimation**: Get estimated token count for LLM context windows
 - 🛡️ **Secret Detection & Redaction**: Uses [gitleaks](https://github.com/gitleaks/gitleaks) to identify potential secrets and prevent sharing sensitive information
 - 🔗 **Dependency Resolution**: Automatically include dependencies for Go, JS/TS, Python when using the `--deps` flag
@@ -108,6 +109,7 @@ grab [options] [directory]
 | `--theme <name>`         | Set the UI theme. Available: catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha, rose-pine, rose-pine-dawn, rose-pine-moon, dracula, nord. (default: `"catppuccin-mocha"`). |
 | `--show-tokens`          | Show the number of tokens for each file in file tree.                                                                                                                                                |
 | `--icons`                | Display Nerd Font icons.                                                                                                                                                                             |
+| `-T, --tree-only`        | Output only file structure without contents. Useful for sharing project layout with LLMs.                                                                                                           |
 
 ### 📖 Examples
 
@@ -177,6 +179,12 @@ grab [options] [directory]
     grab git@github.com:user/repo.git
     ```
 
+12. Output only the project structure (no file contents):
+
+    ```bash
+    grab -T -n
+    ```
+
 ## ⌨️ Keyboard Controls
 
 ### Navigation
@@ -211,6 +219,7 @@ grab [options] [directory]
 | Toggle Dependency Resolution | <kbd>D</kbd>                       | Enable/disable automatic dependency resolution for Go & JS/TS (Default: Off) |
 | Cycle output formats         | <kbd>F</kbd>                       | Cycle through available output formats (markdown, text, xml)                 |
 | Toggle Secret Redaction      | <kbd>S</kbd>                       | Enable/disable automatic secret redaction (Default: On)                      |
+| Toggle Tree-Only Mode        | <kbd>T</kbd>                       | Output only file structure without contents (Default: Off)                   |
 
 ### View Options
 

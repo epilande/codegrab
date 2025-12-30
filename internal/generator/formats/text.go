@@ -57,7 +57,7 @@ PROJECT STRUCTURE
 {{separator}}
 
 {{.Structure}}
-
+{{if .Files}}
 {{separator}}
 PROJECT FILES
 {{separator}}
@@ -67,5 +67,4 @@ FILE: {{.Path}}
 {{separator .Path}}
 
 {{.Content}}
-{{end}}
-`
+{{end}}{{end}}`
