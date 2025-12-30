@@ -3,6 +3,7 @@ package generator
 import (
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 	"runtime"
 	"sort"
@@ -50,12 +51,12 @@ func (g *Generator) buildTree() *Node {
 	}
 	sort.Strings(paths)
 	dirSet := make(map[string]bool)
-	for _, path := range paths {
-		parts := strings.Split(path, string(os.PathSeparator))
+	for _, p := range paths {
+		parts := strings.Split(p, "/")
 		current := root
 		fullPath := ""
 		for i, part := range parts {
-			fullPath = filepath.Join(fullPath, part)
+			fullPath = path.Join(fullPath, part)
 			isLast := i == len(parts)-1
 			found := false
 			isDir := !isLast || dirSet[fullPath]

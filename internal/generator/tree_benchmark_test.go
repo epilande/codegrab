@@ -168,7 +168,7 @@ func createTestTree(rootPath string) *Node {
 		}
 
 		// Build path segments
-		parts := strings.Split(relPath, string(os.PathSeparator))
+		parts := strings.Split(filepath.ToSlash(relPath), "/")
 		current := root
 
 		for i, part := range parts {

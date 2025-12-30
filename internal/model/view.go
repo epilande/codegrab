@@ -2,7 +2,6 @@ package model
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -627,7 +626,7 @@ func (m *Model) getSelectedFileCount() int {
 				effectiveSelection[item.Path] = true
 			} else {
 				// For selected directories, count all non-deselected files
-				prefix := item.Path + string(os.PathSeparator)
+				prefix := item.Path + "/"
 				for _, child := range m.files {
 					if !child.IsDir && strings.HasPrefix(child.Path, prefix) && !m.deselected[child.Path] {
 						if isFilteringBySearch && !searchResultPaths[child.Path] {

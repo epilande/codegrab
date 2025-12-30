@@ -1,7 +1,6 @@
 package model
 
 import (
-	"os"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -51,14 +50,14 @@ func (m *Model) buildDisplayNodes() {
 		m.displayNodes = append(m.displayNodes, node)
 
 		if item.IsDir && !m.collapsed[item.Path] {
-			prefix := item.Path + string(os.PathSeparator)
+			prefix := item.Path + "/"
 			var children []filesystem.FileItem
 			directChildren := make(map[string]filesystem.FileItem)
 
 			for _, f := range m.files {
 				if strings.HasPrefix(f.Path, prefix) {
 					sub := strings.TrimPrefix(f.Path, prefix)
-					if !strings.Contains(sub, string(os.PathSeparator)) {
+					if !strings.Contains(sub, "/") {
 						directChildren[f.Path] = f
 					}
 				}
@@ -82,7 +81,7 @@ func (m *Model) buildDisplayNodes() {
 	}
 
 	for _, item := range m.files {
-		if !strings.Contains(item.Path, string(os.PathSeparator)) {
+		if !strings.Contains(item.Path, "/") {
 			rootItems = append(rootItems, item)
 		}
 	}

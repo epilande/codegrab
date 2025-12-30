@@ -7,6 +7,10 @@ import (
 	"testing"
 )
 
+// TestBuildTree tests tree building from selected files.
+// Note: All internal paths use forward slashes ("/") for cross-platform compatibility.
+// The walker normalizes paths with filepath.ToSlash(), so tree building must use
+// path.Join (not filepath.Join) to maintain consistency.
 func TestBuildTree(t *testing.T) {
 	tempDir, err := os.MkdirTemp("", "tree-test")
 	if err != nil {

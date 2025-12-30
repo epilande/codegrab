@@ -7,6 +7,9 @@ import (
 	"github.com/epilande/codegrab/internal/filesystem"
 )
 
+// TestBuildDisplayNodes tests the display node building.
+// Note: All paths use forward slashes ("/") for cross-platform compatibility.
+// The walker normalizes all paths to use "/" regardless of OS.
 func TestBuildDisplayNodes(t *testing.T) {
 	m := Model{
 		selected:     make(map[string]bool),
@@ -89,5 +92,62 @@ func TestBuildDisplayNodes(t *testing.T) {
 	}
 	if !found {
 		t.Errorf("Expected dir1/file1.txt to be included in display nodes when dir1 is expanded")
+	}
+}
+
+// TestBuildDisplayNodesDeeplyNested tests that deeply nested paths work correctly.
+// This is important for cross-platform compatibility since paths must use "/"
+// consistently (not os.PathSeparator which would be "\" on Windows).
+func TestBuildDisplayNodesDeeplyNested(t *testing.T) {
+	m := Model{
+		selected:     make(map[string]bool),
+		deselected:   make(map[string]bool),
+		collapsed:    make(map[string]bool),
+		isDependency: make(map[string]bool),
+		files: []filesystem.FileItem{
+			{Path: "a", IsDir: true, Level: 0},
+			{Path: "a/b", IsDir: true, Level: 1},
+			{Path: "a/b/c", IsDir: true, Level: 2},
+			{Path: "a/b/c/d", IsDir: true, Level: 3},
+			{Path: "a/b/c/d/file.txt", IsDir: false, Level: 4},
+			{Path: "a/b/other.txt", IsDir: false, Level: 2},
+		},
+	}
+
+	m.buildDisplayNodes()
+
+	// With all directories expanded (default), we should see all nodes
+	expectedPaths := []string{
+		"a",
+		"a/b",
+		"a/b/c",
+		"a/b/c/d",
+		"a/b/c/d/file.txt",
+		"a/b/other.txt",
+	}
+
+	if len(m.displayNodes) != len(expectedPaths) {
+		t.Fatalf("Expected %d display nodes, got %d", len(expectedPaths), len(m.displayNodes))
+	}
+
+	for i, expectedPath := range expectedPaths {
+		if m.displayNodes[i].Path != expectedPath {
+			t.Errorf("Node %d: expected path %q, got %q", i, expectedPath, m.displayNodes[i].Path)
+		}
+	}
+
+	// Collapse a/b and verify children are hidden
+	m.collapsed["a/b"] = true
+	m.buildDisplayNodes()
+
+	// Should only show a and a/b (children of a/b are hidden)
+	if len(m.displayNodes) != 2 {
+		t.Fatalf("Expected 2 display nodes when a/b is collapsed, got %d", len(m.displayNodes))
+	}
+	if m.displayNodes[0].Path != "a" {
+		t.Errorf("Expected first node to be 'a', got %q", m.displayNodes[0].Path)
+	}
+	if m.displayNodes[1].Path != "a/b" {
+		t.Errorf("Expected second node to be 'a/b', got %q", m.displayNodes[1].Path)
 	}
 }
