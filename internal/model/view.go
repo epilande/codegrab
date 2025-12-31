@@ -353,6 +353,11 @@ func (m Model) renderFooter() string {
 		rightParts = append(rightParts, ui.GetStyleInfo().Render(" | 🔗 Deps"))
 	}
 
+	// Tree-only status
+	if m.treeOnly {
+		rightParts = append(rightParts, ui.GetStyleInfo().Render(" | 🌳 Tree"))
+	}
+
 	leftContent := lipgloss.JoinHorizontal(lipgloss.Top, leftParts...)
 	rightContent := lipgloss.JoinHorizontal(lipgloss.Top, rightParts...)
 
