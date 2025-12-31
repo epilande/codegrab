@@ -70,6 +70,7 @@ type Model struct {
 	currentPreviewPath    string
 	currentPreviewContent string
 	currentPreviewIsDir   bool
+	treeOnly              bool
 	lastKeyTime           int64  // Last key press time
 	lastKey               string // Last key pressed
 	tokenCache            *TokenCache
@@ -87,6 +88,7 @@ type Config struct {
 	ResolveDeps    bool
 	ShowIcons      bool
 	ShowTokenCount bool
+	TreeOnly       bool
 }
 
 // updatePreview reads the content of the file at the cursor and updates the preview viewport
@@ -193,6 +195,7 @@ func NewModel(config Config) Model {
 	format := formats.GetFormat(config.Format)
 	gen.SetFormat(format)
 	gen.SetRedactionMode(!config.SkipRedaction)
+	gen.SetTreeOnlyMode(config.TreeOnly)
 
 	moduleName := dependencies.ReadGoModFile(config.RootPath)
 
@@ -225,6 +228,7 @@ func NewModel(config Config) Model {
 		cursor:         0,
 		showTokenCount: config.ShowTokenCount,
 		showPreview:    false,
+		treeOnly:       config.TreeOnly,
 		tokenCache:     NewTokenCache(),
 	}
 }

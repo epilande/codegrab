@@ -151,6 +151,11 @@ func TestPrepareTemplateData(t *testing.T) {
 			t.Errorf("Expected language for %q to be %q, got %q", tf.path, "go", file.Language)
 		}
 	}
+
+	// Verify FilePaths is also populated
+	if len(data.FilePaths) != 3 {
+		t.Errorf("Expected FilePaths to have 3 entries, got %d", len(data.FilePaths))
+	}
 }
 
 func TestGenerateString(t *testing.T) {
@@ -211,6 +216,80 @@ func TestGenerateStringWithNoFormat(t *testing.T) {
 	_, _, _, err := gen.GenerateString()
 	if err == nil {
 		t.Errorf("Expected error when no format is set")
+	}
+}
+
+func TestSetTreeOnlyMode(t *testing.T) {
+	gen := NewGenerator(".", nil, nil, "", false)
+
+	if gen.TreeOnly {
+		t.Errorf("Expected TreeOnly to be false by default")
+	}
+
+	gen.SetTreeOnlyMode(true)
+	if !gen.TreeOnly {
+		t.Errorf("Expected TreeOnly to be true after SetTreeOnlyMode(true)")
+	}
+
+	gen.SetTreeOnlyMode(false)
+	if gen.TreeOnly {
+		t.Errorf("Expected TreeOnly to be false after SetTreeOnlyMode(false)")
+	}
+}
+
+func TestPrepareTemplateDataTreeOnly(t *testing.T) {
+	cache.ResetGlobalCache()
+
+	tempDir, err := os.MkdirTemp("", "generator-test-treeonly")
+	if err != nil {
+		t.Fatalf("Failed to create temp dir: %v", err)
+	}
+	defer os.RemoveAll(tempDir)
+
+	testFiles := []struct {
+		path    string
+		content string
+	}{
+		{"file1.txt", "Content of file1"},
+		{"file2.go", "package main\n\nfunc main() {}"},
+		{"subdir/file3.txt", "Content of file3"},
+	}
+
+	for _, tf := range testFiles {
+		path := filepath.Join(tempDir, filepath.FromSlash(tf.path))
+		dir := filepath.Dir(path)
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			t.Fatalf("Failed to create directory %s: %v", dir, err)
+		}
+		if err := os.WriteFile(path, []byte(tf.content), 0644); err != nil {
+			t.Fatalf("Failed to create file %s: %v", path, err)
+		}
+	}
+
+	gitIgnoreMgr, _ := filesystem.NewGitIgnoreManager(tempDir)
+	filterMgr := filesystem.NewFilterManager()
+	gen := NewGenerator(tempDir, gitIgnoreMgr, filterMgr, "", false)
+	gen.SelectedFiles = map[string]bool{
+		"file1.txt":        true,
+		"file2.go":         true,
+		"subdir/file3.txt": true,
+	}
+	gen.SetTreeOnlyMode(true)
+
+	data, err := gen.PrepareTemplateData()
+	if err != nil {
+		t.Fatalf("PrepareTemplateData failed: %v", err)
+	}
+
+	if data.Structure == "" {
+		t.Errorf("Expected Structure to be non-empty in tree-only mode")
+	}
+	if len(data.Files) != 0 {
+		t.Errorf("Expected Files to be empty in tree-only mode, got %d files", len(data.Files))
+	}
+	// FilePaths should still be populated for XML format support
+	if len(data.FilePaths) != 3 {
+		t.Errorf("Expected FilePaths to have 3 entries in tree-only mode, got %d", len(data.FilePaths))
 	}
 }
 

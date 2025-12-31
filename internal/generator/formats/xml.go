@@ -61,9 +61,8 @@ func (f *XMLFormat) Render(data generator.TemplateData) (string, int, error) {
 		files:   []string{},
 	}
 
-	// Get all file paths from the files data
-	for _, file := range data.Files {
-		addFileToTree(root, file.Path)
+	for _, path := range data.FilePaths {
+		addFileToTree(root, path)
 	}
 
 	// Convert our internal tree to the XML structure

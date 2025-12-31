@@ -153,6 +153,95 @@ func createTestTemplateData() generator.TemplateData {
 				Language: "go",
 			},
 		},
+		FilePaths: []string{"main.go"},
+	}
+}
+
+func createTreeOnlyTemplateData() generator.TemplateData {
+	return generator.TemplateData{
+		Structure: "test-project/\n├── src/\n│   └── main.go\n└── README.md\n",
+		Files:     []generator.FileData{},
+		FilePaths: []string{"src/main.go", "README.md"},
+	}
+}
+
+func TestMarkdownFormatTreeOnly(t *testing.T) {
+	format := &MarkdownFormat{}
+	data := createTreeOnlyTemplateData()
+
+	content, tokens, err := format.Render(data)
+	if err != nil {
+		t.Fatalf("Render failed: %v", err)
+	}
+
+	if !strings.Contains(content, "# Project Structure") {
+		t.Errorf("Expected content to contain '# Project Structure'")
+	}
+	if !strings.Contains(content, "test-project/") {
+		t.Errorf("Expected content to contain 'test-project/'")
+	}
+	if strings.Contains(content, "# Project Files") {
+		t.Errorf("Expected content to NOT contain '# Project Files' in tree-only mode")
+	}
+	if tokens <= 0 {
+		t.Errorf("Expected tokens to be positive, got %d", tokens)
+	}
+}
+
+func TestTxtFormatTreeOnly(t *testing.T) {
+	format := &TxtFormat{}
+	data := createTreeOnlyTemplateData()
+
+	content, tokens, err := format.Render(data)
+	if err != nil {
+		t.Fatalf("Render failed: %v", err)
+	}
+
+	if !strings.Contains(content, "PROJECT STRUCTURE") {
+		t.Errorf("Expected content to contain 'PROJECT STRUCTURE'")
+	}
+	if !strings.Contains(content, "test-project/") {
+		t.Errorf("Expected content to contain 'test-project/'")
+	}
+	if strings.Contains(content, "PROJECT FILES") {
+		t.Errorf("Expected content to NOT contain 'PROJECT FILES' in tree-only mode")
+	}
+	if tokens <= 0 {
+		t.Errorf("Expected tokens to be positive, got %d", tokens)
+	}
+}
+
+func TestXMLFormatTreeOnly(t *testing.T) {
+	format := &XMLFormat{}
+	data := createTreeOnlyTemplateData()
+
+	content, tokens, err := format.Render(data)
+	if err != nil {
+		t.Fatalf("Render failed: %v", err)
+	}
+
+	if !strings.Contains(content, "<?xml") {
+		t.Errorf("Expected content to contain '<?xml'")
+	}
+	if !strings.Contains(content, "<project>") {
+		t.Errorf("Expected content to contain '<project>'")
+	}
+	// Directory structure should be built from FilePaths
+	if !strings.Contains(content, "<directory name=\"src\">") {
+		t.Errorf("Expected content to contain '<directory name=\"src\">' from FilePaths")
+	}
+	if !strings.Contains(content, "<file name=\"main.go\">") {
+		t.Errorf("Expected content to contain '<file name=\"main.go\">' in filesystem section")
+	}
+	if !strings.Contains(content, "<file name=\"README.md\">") {
+		t.Errorf("Expected content to contain '<file name=\"README.md\">' in filesystem section")
+	}
+	// Files section should be empty (no file contents)
+	if strings.Contains(content, "<file path=") {
+		t.Errorf("Expected content to NOT contain file content elements in tree-only mode")
+	}
+	if tokens <= 0 {
+		t.Errorf("Expected tokens to be positive, got %d", tokens)
 	}
 }
 

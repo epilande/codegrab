@@ -50,6 +50,7 @@ func main() {
 	var maxFileSizeStr string
 	var showIcons bool
 	var showTokenCount bool
+	var treeOnly bool
 
 	flag.BoolVar(&showHelp, "help", false, "Display help information")
 	flag.BoolVar(&showHelp, "h", false, "Display help information (shorthand)")
@@ -91,6 +92,9 @@ func main() {
 	flag.BoolVar(&showIcons, "icons", false, "Display Nerd Font icons")
 
 	flag.BoolVar(&showTokenCount, "show-tokens", false, "Show the number of tokens for each file")
+
+	flag.BoolVar(&treeOnly, "tree-only", false, "Output only file structure without contents")
+	flag.BoolVar(&treeOnly, "T", false, "Output only file structure (shorthand)")
 
 	flag.Parse()
 
@@ -187,7 +191,7 @@ func main() {
 	}
 
 	if nonInteractive {
-		runNonInteractive(root, filterMgr, outputPath, useTempFile, formatName, skipRedaction, resolveDeps, maxDepth, maxFileSize)
+		runNonInteractive(root, filterMgr, outputPath, useTempFile, formatName, skipRedaction, resolveDeps, maxDepth, maxFileSize, treeOnly)
 	} else {
 		config := model.Config{
 			RootPath:       root,
@@ -201,6 +205,7 @@ func main() {
 			ShowTokenCount: showTokenCount,
 			MaxDepth:       maxDepth,
 			MaxFileSize:    maxFileSize,
+			TreeOnly:       treeOnly,
 		}
 
 		m := model.NewModel(config)
@@ -213,7 +218,7 @@ func main() {
 }
 
 // runNonInteractive processes files and generates output without user interaction
-func runNonInteractive(rootPath string, filterMgr *filesystem.FilterManager, outputPath string, useTempFile bool, formatName string, skipRedaction bool, resolveDeps bool, maxDepth int, maxFileSize int64) {
+func runNonInteractive(rootPath string, filterMgr *filesystem.FilterManager, outputPath string, useTempFile bool, formatName string, skipRedaction bool, resolveDeps bool, maxDepth int, maxFileSize int64, treeOnly bool) {
 	gitIgnoreMgr, err := filesystem.NewGitIgnoreManager(rootPath)
 	if err != nil {
 		log.Fatalf("Error reading .gitignore: %v\n", err)
@@ -301,6 +306,7 @@ func runNonInteractive(rootPath string, filterMgr *filesystem.FilterManager, out
 	format := formats.GetFormat(formatName)
 	gen.SetFormat(format)
 	gen.SetRedactionMode(!skipRedaction)
+	gen.SetTreeOnlyMode(treeOnly)
 
 	gen.SelectedFiles = selectedFiles
 
