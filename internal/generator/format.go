@@ -14,6 +14,7 @@ type FileData struct {
 type TemplateData struct {
 	Structure string
 	Files     []FileData
+	FilePaths []string
 }
 
 // Format defines the interface for different output formats

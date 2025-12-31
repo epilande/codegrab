@@ -202,6 +202,11 @@ func (g *Generator) PrepareTemplateData() (TemplateData, error) {
 
 	g.SelectedFiles = expandedSelection
 
+	filePaths := make([]string, 0, len(expandedSelection))
+	for path := range expandedSelection {
+		filePaths = append(filePaths, path)
+	}
+
 	rootNode := g.buildTree()
 	var structureBuilder strings.Builder
 	baseRootName := filepath.Base(g.RootPath)
@@ -239,5 +244,6 @@ func (g *Generator) PrepareTemplateData() (TemplateData, error) {
 	return TemplateData{
 		Structure: structureBuilder.String(),
 		Files:     filesData,
+		FilePaths: filePaths,
 	}, nil
 }

@@ -151,6 +151,11 @@ func TestPrepareTemplateData(t *testing.T) {
 			t.Errorf("Expected language for %q to be %q, got %q", tf.path, "go", file.Language)
 		}
 	}
+
+	// Verify FilePaths is also populated
+	if len(data.FilePaths) != 3 {
+		t.Errorf("Expected FilePaths to have 3 entries, got %d", len(data.FilePaths))
+	}
 }
 
 func TestGenerateString(t *testing.T) {
@@ -281,6 +286,10 @@ func TestPrepareTemplateDataTreeOnly(t *testing.T) {
 	}
 	if len(data.Files) != 0 {
 		t.Errorf("Expected Files to be empty in tree-only mode, got %d files", len(data.Files))
+	}
+	// FilePaths should still be populated for XML format support
+	if len(data.FilePaths) != 3 {
+		t.Errorf("Expected FilePaths to have 3 entries in tree-only mode, got %d", len(data.FilePaths))
 	}
 }
 
