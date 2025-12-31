@@ -156,6 +156,82 @@ func createTestTemplateData() generator.TemplateData {
 	}
 }
 
+func createTreeOnlyTemplateData() generator.TemplateData {
+	return generator.TemplateData{
+		Structure: "test-project/\n├── src/\n│   └── main.go\n└── README.md\n",
+		Files:     []generator.FileData{},
+	}
+}
+
+func TestMarkdownFormatTreeOnly(t *testing.T) {
+	format := &MarkdownFormat{}
+	data := createTreeOnlyTemplateData()
+
+	content, tokens, err := format.Render(data)
+	if err != nil {
+		t.Fatalf("Render failed: %v", err)
+	}
+
+	if !strings.Contains(content, "# Project Structure") {
+		t.Errorf("Expected content to contain '# Project Structure'")
+	}
+	if !strings.Contains(content, "test-project/") {
+		t.Errorf("Expected content to contain 'test-project/'")
+	}
+	if strings.Contains(content, "# Project Files") {
+		t.Errorf("Expected content to NOT contain '# Project Files' in tree-only mode")
+	}
+	if tokens <= 0 {
+		t.Errorf("Expected tokens to be positive, got %d", tokens)
+	}
+}
+
+func TestTxtFormatTreeOnly(t *testing.T) {
+	format := &TxtFormat{}
+	data := createTreeOnlyTemplateData()
+
+	content, tokens, err := format.Render(data)
+	if err != nil {
+		t.Fatalf("Render failed: %v", err)
+	}
+
+	if !strings.Contains(content, "PROJECT STRUCTURE") {
+		t.Errorf("Expected content to contain 'PROJECT STRUCTURE'")
+	}
+	if !strings.Contains(content, "test-project/") {
+		t.Errorf("Expected content to contain 'test-project/'")
+	}
+	if strings.Contains(content, "PROJECT FILES") {
+		t.Errorf("Expected content to NOT contain 'PROJECT FILES' in tree-only mode")
+	}
+	if tokens <= 0 {
+		t.Errorf("Expected tokens to be positive, got %d", tokens)
+	}
+}
+
+func TestXMLFormatTreeOnly(t *testing.T) {
+	format := &XMLFormat{}
+	data := createTreeOnlyTemplateData()
+
+	content, tokens, err := format.Render(data)
+	if err != nil {
+		t.Fatalf("Render failed: %v", err)
+	}
+
+	if !strings.Contains(content, "<?xml") {
+		t.Errorf("Expected content to contain '<?xml'")
+	}
+	if !strings.Contains(content, "<project>") {
+		t.Errorf("Expected content to contain '<project>'")
+	}
+	if strings.Contains(content, "<file path=") {
+		t.Errorf("Expected content to NOT contain file elements in tree-only mode")
+	}
+	if tokens <= 0 {
+		t.Errorf("Expected tokens to be positive, got %d", tokens)
+	}
+}
+
 func TestAddFileToTree(t *testing.T) {
 	root := &directoryEntry{
 		name:    ".",
