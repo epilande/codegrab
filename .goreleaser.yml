@@ -61,6 +61,7 @@ brews:
     homepage: "https://github.com/epilande/codegrab"
     description: "An interactive CLI tool for selecting and bundling code into a single, LLM-ready output file"
     license: "MIT"
+    directory: Formula
     repository:
       owner: epilande
       name: homebrew-tap
